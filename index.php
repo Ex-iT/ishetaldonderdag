@@ -39,6 +39,7 @@
             font-size: 16px;
             background-color: var(--background-color);
         }
+        nav { display: none; }
         main {
             display: flex;
             flex-direction: column;
