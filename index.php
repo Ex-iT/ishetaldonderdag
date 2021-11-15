@@ -22,6 +22,13 @@
             --text-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
             --background-color: #fff;
         }
+        :root[data-theme='dark'] {
+            --text-color: #fff;
+            --text-color-active: #14ba67;
+            --text-color-inactive: #ec0000;
+            --text-shadow: 0 2px 5px rgba(255, 255, 255, 0.5);
+            --background-color: #000;
+        }
         @media (prefers-color-scheme: dark) {
             :root {
                 --text-color: #fff;
