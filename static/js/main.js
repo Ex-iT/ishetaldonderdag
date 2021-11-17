@@ -75,6 +75,9 @@
     main.parentElement.prepend(nav);
   };
 
-  injectCss(() => injectHtml(theme));
-  htmlElement.setAttribute('data-theme', theme);
+  const urlSearchParams = new URLSearchParams(w.location.search);
+  if (urlSearchParams.get('homescreen') !== '1') {
+    injectCss(() => injectHtml(theme));
+    htmlElement.setAttribute('data-theme', theme);
+  }
 })(window, document);
