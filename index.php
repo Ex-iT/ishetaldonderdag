@@ -3,16 +3,22 @@
     $isThursday = date("w", time()) == 4;
     $message = $isThursday ? "Ja!" : "Nee.";
 ?><!DOCTYPE html>
-<html lang="nl">
+<html lang="nl-NL">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Is Het Al Donderdag?</title>
     <meta name="description" content="Wil je weten of het al donderdag is?">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap&text=JaNe.!?Ishtlondrg" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap&text=JaNe.!?IshtlondrgMviF" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="mask-icon" href="/static/images/safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
     <style>
         :root {
             --font-family: 'Open Sans', sans-serif;

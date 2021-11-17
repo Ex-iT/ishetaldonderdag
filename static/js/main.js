@@ -25,9 +25,7 @@
       theme = storedTheme;
     } else {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      if (mediaQuery.matches === true) {
-        theme = 'dark';
-      }
+      theme = mediaQuery.matches === true ? 'dark' : 'light';
     }
 
     return theme;
@@ -43,6 +41,10 @@
     const main = d.querySelector('main');
     const nav = d.createElement('nav');
 
+    const anchorMF = d.createElement('a');
+    anchorMF.href = 'https://moviefeed.ishetaldonderdag.nl/';
+    anchorMF.innerText = 'MovieFeed';
+
     const anchor = d.createElement('a');
     anchor.href = 'https://github.com/Ex-iT/ishetaldonderdag';
     anchor.title = 'IsHetAlDonderdag.nl op GitHub';
@@ -50,20 +52,25 @@
     anchor.target = '_blank';
     anchor.rel = 'noopener noreferrer';
 
+    const updateButton = (button, theme) => {
+      button.title = button.ariaLabel = `Wissel naar ${
+        theme === 'light' ? 'donker' : 'licht'
+      } thema`;
+      button.innerHTML = theme === 'light' ? iconMoon : iconSun;
+    };
+
     const button = d.createElement('button');
     button.type = 'button';
-    button.title = button.ariaLabel = `Wissel naar ${
-      theme === 'light' ? 'donker' : 'licht'
-    } thema`;
     button.onclick = () => {
       theme = theme === 'light' ? 'dark' : 'light';
-      button.innerHTML = theme === 'light' ? iconMoon : iconSun;
+      updateButton(button, theme);
       toggleTheme(theme);
     };
-    button.innerHTML = theme === 'light' ? iconMoon : iconSun;
+    updateButton(button, theme);
 
     nav.prepend(anchor);
     nav.prepend(button);
+    nav.prepend(anchorMF);
 
     main.parentElement.prepend(nav);
   };
