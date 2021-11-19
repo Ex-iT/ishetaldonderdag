@@ -13,7 +13,7 @@ pipenv install --dev
 To start a local development server on port `5000` run:
 
 ```bash
-FLASK_ENV=development pipenv run flask run
+FLASK_APP=index FLASK_ENV=development pipenv run flask run
 ```
 
 ## Attribution
