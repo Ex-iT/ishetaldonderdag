@@ -10,9 +10,8 @@ def home(path):
     amsterdam = timezone('Europe/Amsterdam')
     now = amsterdam.localize(datetime.now())
     isThursday = now.isoweekday() == 4
-    message = 'Ja!' if isThursday else 'Nee.'
 
-    return render_template('index.html', isThursday=isThursday, message=message)
+    return render_template('index.html', isThursday=isThursday)
 
 @app.route('/favicon.ico')
 def favicon():

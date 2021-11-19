@@ -81,7 +81,7 @@
 <body>
     <main>
         <h1>Is het al donderdag?</h1>
-        <h2 class="{% if isThursday %}active{% else %}inactive{% endif %}">{{ message }}</h2>
+        <h2 class="{{ 'active' if isThursday else 'inactive' }}">{{ 'Ja!' if isThursday else 'Nee.' }}</h2>
     </main>
 </body>
 </html>
