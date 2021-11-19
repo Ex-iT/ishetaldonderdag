@@ -1,8 +1,4 @@
-<?php
-    date_default_timezone_set('Europe/Amsterdam');
-    $isThursday = date("w", time()) == 4;
-    $message = $isThursday ? "Ja!" : "Nee.";
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl-NL">
 <head>
     <meta charset="UTF-8">
@@ -12,11 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap&text=JaNe.!?IshtlondrgMviF" rel="stylesheet" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="mask-icon" href="/static/images/safari-pinned-tab.svg" color="#5bbad5" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" />
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+    <link rel="mask-icon" href="{{ url_for('static', filename='images/safari-pinned-tab.svg') }}" color="#5bbad5" />
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
     <style>
@@ -85,7 +81,7 @@
 <body>
     <main>
         <h1>Is het al donderdag?</h1>
-        <h2 class="<?php echo ($isThursday ? 'active' : 'inactive'); ?>"><?php echo $message; ?></h2>
+        <h2 class="{% if isThursday %}active{% else %}inactive{% endif %}">{{ message }}</h2>
     </main>
 </body>
 </html>

@@ -1,13 +1,19 @@
 # IsHetAlDonderdag.nl
 
-A rebuild of the original `ishetaldonderdag.nl` based on PHP.
+A rebuild of the original `ishetaldonderdag.nl` based on Python 3.9 and [Flask v1.0.2](https://flask.palletsprojects.com/).
 
 ## Development
 
-To start a local development server on port `8000` run:
+Install dependencies:
 
 ```bash
-php -S localhost:8000
+pipenv install --dev
+```
+
+To start a local development server on port `5000` run:
+
+```bash
+FLASK_ENV=development pipenv run flask run
 ```
 
 ## Attribution
