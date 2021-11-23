@@ -13,7 +13,7 @@
     link.onload = onLoad();
     link.type = 'text/css';
     link.rel = 'stylesheet';
-    link.href = '/static/css/main.css';
+    link.href = '/css/main.css';
     scriptTag.parentElement.appendChild(link);
   };
 
