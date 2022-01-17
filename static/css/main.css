@@ -1,20 +1,20 @@
 nav {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    border-bottom: 1px solid #474747;
-    padding: 0.3em 0;
-    background-color: var(--background-color);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  border-bottom: 1px solid #474747;
+  padding: 0.3em 0;
+  background-color: var(--background-color);
 }
 
 a {
-    display: inline-block;
-    font-family:  var(--font-family);
-    color: var(--text-color);
-    padding: 0 0.5em;
-    margin: 0 0.5em;
+  display: inline-block;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  padding: 0 0.5em;
+  margin: 0 0.5em;
 }
 
 a:hover {
