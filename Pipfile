@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "==1.0.2"
-pytz = "*"
-flask-minify = "*"
+pytz = ">=2021.3"
+Flask = ">=2.0.2"
+Flask-Minify = ">=0.36"
 
 [dev-packages]
 
