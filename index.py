@@ -19,3 +19,12 @@ def home(path):
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('index.html', is_thursday=is_thursday()), 404
+
+@app.after_request
+def add_header(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'no-referrer-when-downgrade'
+    response.headers['Permissions-Policy'] = 'geolocation=(self), microphone=()'
+    return response
