@@ -76,6 +76,7 @@
           --background-color: #000;
         }
       }
+      *, *::before, *::after { box-sizing: border-box; }
       html,
       body {
         margin: 0;
@@ -84,6 +85,7 @@
         height: 100vh;
         font-size: 16px;
         background-color: var(--background-color);
+        -webkit-font-smoothing: antialiased;
       }
       nav {
         display: none;
