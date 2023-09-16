@@ -14,11 +14,15 @@
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap&text=JaNe.!?IshtlondrgMviF"
     />
     <link
+      id="g-print-style"
       rel="stylesheet"
       media="print"
-      onload="this.media='all'"
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap&text=JaNe.!?IshtlondrgMviF"
     />
+    <script nonce="{{ nonce }}">
+      const link = document.getElementById('g-print-style');
+      link.addEventListener('load', () => (link.media = 'all'));
+    </script>
     <noscript>
       <link
         rel="stylesheet"
@@ -121,7 +125,7 @@
         color: var(--text-color-inactive);
       }
     </style>
-    <script src="/js/main.js" async></script>
+    <script src="/js/main.js" async nonce="{{ nonce }}"></script>
   </head>
   <body>
     <main>
