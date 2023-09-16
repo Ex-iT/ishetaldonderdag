@@ -35,6 +35,6 @@ def after_request(response):
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Referrer-Policy'] = 'no-referrer-when-downgrade'
     response.headers['Permissions-Policy'] = 'geolocation=(self), microphone=()'
-    response.headers['Content-Security-Policy'] = f'default-src \'self\'; base-uri \'none\'; object-src \'none\'; style-src \'self\' \'unsafe-inline\' fonts.googleapis.com; font-src \'self\' fonts.gstatic.com; script-src \'self\' \'nonce-{NONCE}\' \'unsafe-inline\' \'strict-dynamic\' https:'
+    response.headers['Content-Security-Policy'] = f'default-src \'self\'; base-uri \'none\'; object-src \'none\'; style-src \'self\' \'unsafe-inline\' fonts.googleapis.com; font-src \'self\' fonts.gstatic.com; script-src \'self\' \'nonce-{NONCE}\' \'strict-dynamic\''
 
     return response
