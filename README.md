@@ -12,10 +12,14 @@ python -m venv venv
 
 Activate the virtual environment:
 
-(PowerShell)
+```bash
+source venv/bin/activate
+```
+
+Install requirements:
 
 ```bash
-.\venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
 Install dependencies:

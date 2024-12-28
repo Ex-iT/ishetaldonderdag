@@ -41,8 +41,12 @@
     const main = d.querySelector('main');
     const nav = d.createElement('nav');
 
+    const anchorCDR = d.createElement('a');
+    anchorCDR.href = 'https://cdr.ex-it.nl/';
+    anchorCDR.innerText = 'CDR-Player';
+
     const anchorMF = d.createElement('a');
-    anchorMF.href = 'https://moviefeed.ishetaldonderdag.nl/';
+    anchorMF.href = 'https://moviefeed.ex-it.nl/';
     anchorMF.innerText = 'MovieFeed';
 
     const anchor = d.createElement('a');
@@ -53,9 +57,7 @@
     anchor.rel = 'noopener noreferrer';
 
     const updateButton = (button, theme) => {
-      button.title = button.ariaLabel = `Wissel naar ${
-        theme === 'light' ? 'donker' : 'licht'
-      } thema`;
+      button.title = button.ariaLabel = `Wissel naar ${theme === 'light' ? 'donker' : 'licht'} thema`;
       button.innerHTML = theme === 'light' ? iconMoon : iconSun;
     };
 
@@ -71,6 +73,7 @@
     nav.prepend(anchor);
     nav.prepend(button);
     nav.prepend(anchorMF);
+    nav.prepend(anchorCDR);
 
     main.parentElement.prepend(nav);
   };
