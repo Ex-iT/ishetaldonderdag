@@ -47,13 +47,13 @@ curl -I http://localhost:5000/static/css/main.css
 
 ### Modify Assets
 1. Edit `static/js/main.js` or `static/css/main.css`
-2. **Restart dev server** - new hash generated for JS, CSS served fresh
+2. **Restart dev server** - changes served fresh (no cache busting needed)
 
 ---
 
 ## Key Implementation Details
 
-### Security Headers (index.py:85-100)
+### Security Headers (index.py:34-48)
 - CSP with nonce-based script allowlisting
 - `script-src 'self' 'nonce-{g.nonce}' 'strict-dynamic'`
 - `style-src 'self' 'unsafe-inline' fonts.googleapis.com` (CSS bundle + Google Fonts)
@@ -125,7 +125,7 @@ pip install -r requirements.txt
 Edit `after_request()` in `index.py`
 
 ### Update Python Version
-1. Change `python_version` in `Pipfile`
+1. Update `python_version` in `vercel.json` or project settings
 2. Recreate venv: `rm -rf venv && python3.14 -m venv venv`
 3. Reinstall dependencies
 
