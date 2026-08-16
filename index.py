@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, render_template, g, request
+from flask import Flask, render_template, g, request, send_from_directory
 from flask_assets import Environment, Bundle
 from zoneinfo import ZoneInfo
 import secrets
@@ -7,13 +7,15 @@ import os
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
 
-# Vercel has read-only FS except /tmp - use /tmp for cache/manifest only
+# Vercel has read-only FS except /tmp - use /tmp for everything
 cache_dir = os.path.join("/tmp", "webassets-cache")
+output_dir = os.path.join("/tmp", "webassets-output")
 os.makedirs(cache_dir, exist_ok=True)
+os.makedirs(output_dir, exist_ok=True)
 
 assets = Environment(app)
-assets.directory = "static"  # Write compiled assets to static/ (Flask serves from here)
-assets.cache = cache_dir     # Cache/manifest in /tmp (writable)
+assets.directory = output_dir  # Write compiled assets to /tmp (writable)
+assets.cache = cache_dir       # Cache in /tmp
 assets.manifest = "file"
 assets.url = "/static/"
 
@@ -31,6 +33,18 @@ assets.register("main_js", js_bundle)
 assets.register("main_css", css_bundle)
 
 
+# Serve compiled assets from /tmp on Vercel (or static/ locally)
+@app.route("/static/<path:filename>")
+def serve_assets(filename):
+    # Try /tmp first (Vercel), fallback to static/ (local dev)
+    for base_dir in [output_dir, "static"]:
+        filepath = os.path.join(base_dir, filename)
+        if os.path.exists(filepath):
+            return send_from_directory(base_dir, filename)
+    # Fallback to Flask's static handler
+    return send_from_directory("static", filename)
+
+
 def is_thursday():
     amsterdam = ZoneInfo("Europe/Amsterdam")
     now = datetime.now(amsterdam)
@@ -39,6 +53,11 @@ def is_thursday():
 
 def set_nonce():
     g.nonce = secrets.token_urlsafe()
+
+
+@app.route("/images/<path:filename>")
+def serve_images(filename):
+    return send_from_directory("static/images", filename)
 
 
 @app.route("/manifest.json")
