@@ -1,64 +1,11 @@
 from datetime import datetime
 from flask import Flask, render_template, g, request, send_from_directory
-from flask_assets import Environment, Bundle
 from zoneinfo import ZoneInfo
+from flask_minify import minify
 import secrets
-import os
 
-app = Flask(__name__, static_folder="static")
-
-# Vercel has read-only FS except /tmp - use /tmp for everything
-cache_dir = os.path.join("/tmp", "webassets-cache")
-output_dir = os.path.join("/tmp", "webassets-output")
-os.makedirs(cache_dir, exist_ok=True)
-os.makedirs(output_dir, exist_ok=True)
-
-assets = Environment(app)
-assets.directory = output_dir  # Write compiled assets to /tmp (writable)
-assets.cache = cache_dir       # Cache in /tmp
-assets.manifest = "file"
-assets.url = "/static/"
-
-js_bundle = Bundle(
-    "js/main.js",
-    filters="rjsmin",
-    output="js/main.%(version)s.js"
-)
-css_bundle = Bundle(
-    "css/main.css",
-    filters="cssmin",
-    output="css/main.%(version)s.css"
-)
-assets.register("main_js", js_bundle)
-assets.register("main_css", css_bundle)
-
-
-# Serve compiled assets from /tmp on Vercel (or static/ locally)
-@app.route("/static/<path:filename>")
-def serve_assets(filename):
-    # Ensure assets are compiled (first request on Vercel)
-    for base_dir in [output_dir, "static"]:
-        filepath = os.path.join(base_dir, filename)
-        if os.path.exists(filepath):
-            return send_from_directory(base_dir, filename)
-    
-    # Force compilation if not found (Vercel first request)
-    try:
-        if filename.startswith("js/"):
-            js_bundle.build()
-        elif filename.startswith("css/"):
-            css_bundle.build()
-    except Exception:
-        pass
-    
-    # Retry after compilation
-    for base_dir in [output_dir, "static"]:
-        filepath = os.path.join(base_dir, filename)
-        if os.path.exists(filepath):
-            return send_from_directory(base_dir, filename)
-    
-    # Fallback to Flask's static handler
-    return send_from_directory("static", filename)
+app = Flask(__name__, static_folder="static", static_url_path="/static")
+minify(app=app, html=True, js=True, cssless=True)
 
 
 def is_thursday():
@@ -81,7 +28,6 @@ def serve_images(filename):
 @app.route("/browserconfig.xml")
 @app.route("/favicon.ico")
 def static_root_files():
-    from flask import send_from_directory
     filename = request.path.lstrip("/")
     return send_from_directory("static", filename)
 
@@ -113,12 +59,5 @@ def after_request(response):
     response.headers["Vary"] = "Accept-Encoding"
     if response.content_type and "text/html" in response.content_type:
         response.charset = "utf-8"
-
-    if response.status_code == 200:
-        path = request.path
-        if (path.startswith("/js/main.") and path.endswith(".js")) or (
-            path.startswith("/css/main.") and path.endswith(".css")
-        ):
-            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
 
     return response

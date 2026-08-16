@@ -5,7 +5,7 @@
 - **Language**: Python 3.14
 - **Framework**: Flask 3.x
 - **Deployment**: Vercel (Python builder)
-- **Asset Pipeline**: Flask-Assets with content-hash cache busting
+- **Asset Pipeline**: CSS served directly; Flask-Minify for HTML/JS minification
 
 ---
 
@@ -14,20 +14,18 @@
 ### Key Files
 | File | Purpose |
 |------|---------|
-| `index.py` | Flask app factory, routes, asset bundles, security headers |
-| `templates/index.html` | Main template with asset tags (critical CSS in bundle) |
+| `index.py` | Flask app, routes, security headers |
+| `templates/index.html` | Main template with inline CSS (critical), direct JS/CSS links |
 | `static/js/main.js` | Client-side: theme toggle, GitHub link, dynamic nav injection |
-| `static/css/main.css` | All styles (theme vars, base, nav) - bundled by Flask-Assets |
+| `static/css/main.css` | All styles (theme vars, base, nav) - served directly |
 | `vercel.json` | Vercel deployment config (Python builder) |
 | `requirements.txt` | Python dependencies |
 
-### Asset Pipeline (Flask-Assets)
-- **JS Bundle**: `js/main.js` → `js/main.<hash>.js` (minified via `rjsmin`)
-- **CSS Bundle**: `css/main.css` → `css/main.<hash>.css` (minified via `cssmin`)
-- **Template Tag**: `{% assets "main_js" %}` / `{% assets "main_css" %}` generates correct hashed URL
-- **Dev Mode** (`FLASK_DEBUG=1`): Serves source files with content-hash, auto-reload
-- **Prod Mode** (`FLASK_DEBUG=0`): Serves minified, content-hashed files
-- **No build step** - Flask-Assets compiles on-demand
+### Asset Pipeline
+- **JS**: `static/js/main.js` served directly at `/static/js/main.js` (Flask-Minify minifies on-the-fly)
+- **CSS**: `static/css/main.css` served directly at `/static/css/main.css` (Flask-Minify minifies on-the-fly)
+- **HTML**: Minified via `flask-minify` (htmlminf)
+- **No Flask-Assets** - simple static serving avoids Vercel filesystem issues
 
 ---
 
@@ -40,28 +38,22 @@ cd /home/ex-it/Development/ishetaldonderdag
 # Runs on http://localhost:5000
 ```
 
-### Verify Cache Busting
+### Verify Assets
 ```bash
-# Dev mode - content-hashed (not unhashed)
-curl http://localhost:5000/ | grep "script src"
-# → /js/main.<hash>.js
-
-# Prod mode - hashed, minified
-FLASK_DEBUG=0 ./venv/bin/flask --app index.py run &
-curl http://localhost:5000/ | grep "script src"
-# → /js/main.<hash>.js (same hash if content unchanged)
+# Verify assets serve correctly
+curl -I http://localhost:5000/static/js/main.js
+curl -I http://localhost:5000/static/css/main.css
 ```
 
 ### Modify Assets
 1. Edit `static/js/main.js` or `static/css/main.css`
-2. **Dev mode**: Refresh browser - changes load instantly, new hash generated
-3. **Prod mode**: Hash changes automatically on next request
+2. **Restart dev server** - new hash generated for JS, CSS served fresh
 
 ---
 
 ## Key Implementation Details
 
-### Security Headers (index.py:46-63)
+### Security Headers (index.py:85-100)
 - CSP with nonce-based script allowlisting
 - `script-src 'self' 'nonce-{g.nonce}' 'strict-dynamic'`
 - `style-src 'self' 'unsafe-inline' fonts.googleapis.com` (CSS bundle + Google Fonts)
@@ -83,7 +75,7 @@ curl http://localhost:5000/ | grep "script src"
 
 ### Critical CSS Strategy
 - All CSS in `static/css/main.css` (theme vars, base styles, nav styles)
-- Bundled via Flask-Assets, linked in template via `{% assets "main_css" %}`
+- Served directly at `/static/css/main.css`
 - Fonts preloaded via `<link rel="preload">`
 - No inline `<style>` block - HTML stays small for single-packet delivery
 
@@ -99,8 +91,7 @@ curl http://localhost:5000/ | grep "script src"
 }
 ```
 - **No build command** - `@vercel/python` installs deps from `requirements.txt`
-- Flask-Assets compiles on first request using `/tmp` (writable on Vercel)
-- First request has slight latency (bundle compilation)
+- JS/CSS served directly from static folder
 
 ### Environment Variables
 - `FLASK_DEBUG=0` (default on Vercel)
@@ -113,9 +104,7 @@ curl http://localhost:5000/ | grep "script src"
 ### requirements.txt (Production)
 ```txt
 Flask>=2.3.3
-Flask-Assets>=2.0.0,<3.0.0
-cssmin>=0.2.0
-rjsmin>=1.2.0
+flask-minify>=0.50
 requests>=2.31.0
 ```
 
@@ -130,11 +119,10 @@ pip install -r requirements.txt
 
 ### Add New JS/CSS Asset
 1. Add file to `static/js/` or `static/css/`
-2. Register new Bundle in `index.py`
-3. Use `{% assets "bundle_name" %}` in template
+2. Link in template (JS: `<script src="/static/js/...">`, CSS: `<link rel="stylesheet" href="/static/css/...">`)
 
 ### Modify Security Headers
-Edit `after_request()` in `index.py` (lines 46-63)
+Edit `after_request()` in `index.py`
 
 ### Update Python Version
 1. Change `python_version` in `Pipfile`
@@ -143,11 +131,9 @@ Edit `after_request()` in `index.py` (lines 46-63)
 
 ### Debug Asset Issues
 ```bash
-# Check bundle registration
-./venv/bin/python -c "from index import assets; print(assets._named_bundles)"
-
-# Force rebuild (delete cached bundles)
-rm -rf static/.webassets-cache
+# Verify assets serve correctly
+curl -I http://localhost:5000/static/js/main.js
+curl -I http://localhost:5000/static/css/main.css
 ```
 
 ---
@@ -158,9 +144,8 @@ rm -rf static/.webassets-cache
 - [ ] Page loads at `http://localhost:5000/`
 - [ ] Theme toggle works (light ↔ dark)
 - [ ] GitHub link present, opens in new tab
-- [ ] Dev mode: JS loads as `/js/main.<hash>.js` (content-hashed)
-- [ ] Prod mode: JS loads as `/js/main.<hash>.js` (minified, content-hashed)
-- [ ] Modify `main.js` → hash changes in prod mode
+- [ ] Dev mode: JS loads as `/static/js/main.js` (minified by flask-minify)
+- [ ] Prod mode: JS loads as `/static/js/main.js` (minified by flask-minify)
 - [ ] CSP headers present (check DevTools Network → Headers)
 - [ ] Nonce rotates per request
 - [ ] `Vary: Accept-Encoding` header present on all responses
