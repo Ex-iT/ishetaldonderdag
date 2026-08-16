@@ -94,13 +94,13 @@ curl http://localhost:5000/ | grep "script src"
 ### Config (`vercel.json`)
 ```json
 {
-  "buildCommand": "flask --app index.py assets build",
   "builds": [{"src": "*.py", "use": "@vercel/python"}],
   "routes": [{"src": "/(.*)", "dest": "/"}]
 }
 ```
-- `buildCommand` runs **after** `pip install -r requirements.txt` - pre-compiles asset bundles
-- Eliminates first-request latency on Vercel
+- **No build command** - `@vercel/python` installs deps from `requirements.txt`
+- Flask-Assets compiles on first request using `/tmp` (writable on Vercel)
+- First request has slight latency (bundle compilation)
 
 ### Environment Variables
 - `FLASK_DEBUG=0` (default on Vercel)

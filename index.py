@@ -3,10 +3,20 @@ from flask import Flask, render_template, g, request
 from flask_assets import Environment, Bundle
 from zoneinfo import ZoneInfo
 import secrets
+import os
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 
+# Vercel has read-only FS except /tmp - configure Flask-Assets to use /tmp
+cache_dir = os.path.join("/tmp", "webassets-cache")
+os.makedirs(cache_dir, exist_ok=True)
+
 assets = Environment(app)
+assets.directory = cache_dir
+assets.manifest = "file"
+assets.url = "/static/"
+assets.cache = cache_dir
+
 js_bundle = Bundle(
     "js/main.js",
     filters="rjsmin",

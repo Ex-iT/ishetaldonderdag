@@ -1,5 +1,4 @@
 {
-  "buildCommand": "flask --app index.py assets build",
   "builds": [
     {
       "src": "*.py",
