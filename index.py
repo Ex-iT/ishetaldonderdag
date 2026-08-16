@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 import secrets
 import os
 
-app = Flask(__name__, static_folder="static", static_url_path="/static")
+app = Flask(__name__, static_folder="static")
 
 # Vercel has read-only FS except /tmp - use /tmp for everything
 cache_dir = os.path.join("/tmp", "webassets-cache")
