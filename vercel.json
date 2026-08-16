@@ -1,11 +1,9 @@
 {
+  "buildCommand": "flask --app index.py assets build",
   "builds": [
     {
       "src": "*.py",
-      "use": "@vercel/python",
-      "config": {
-        "buildCommand": "flask --app index.py assets build"
-      }
+      "use": "@vercel/python"
     }
   ],
   "routes": [

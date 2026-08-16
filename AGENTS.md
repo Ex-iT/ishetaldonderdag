@@ -19,7 +19,7 @@
 | `static/js/main.js` | Client-side: theme toggle, GitHub link, dynamic nav injection |
 | `static/css/main.css` | All styles (theme vars, base, nav) - bundled by Flask-Assets |
 | `vercel.json` | Vercel deployment config (Python builder) |
-| `Pipfile` | Python dependencies |
+| `requirements.txt` | Python dependencies |
 
 ### Asset Pipeline (Flask-Assets)
 - **JS Bundle**: `js/main.js` → `js/main.<hash>.js` (minified via `rjsmin`)
@@ -94,13 +94,13 @@ curl http://localhost:5000/ | grep "script src"
 ### Config (`vercel.json`)
 ```json
 {
+  "buildCommand": "flask --app index.py assets build",
   "builds": [{"src": "*.py", "use": "@vercel/python"}],
   "routes": [{"src": "/(.*)", "dest": "/"}]
 }
 ```
-- **No build command** - Flask-Assets compiles on first request
-- **Note**: First request in production may have latency (bundle compilation)
-- Consider pre-warming or adding build step if latency is an issue
+- `buildCommand` runs **after** `pip install -r requirements.txt` - pre-compiles asset bundles
+- Eliminates first-request latency on Vercel
 
 ### Environment Variables
 - `FLASK_DEBUG=0` (default on Vercel)
@@ -110,17 +110,13 @@ curl http://localhost:5000/ | grep "script src"
 
 ## Dependency Management
 
-### Pipfile (Production)
-```toml
-[packages]
-Flask = ">=2.3.3"
-Flask-Assets = ">=2.0.0,<3.0.0"
-cssmin = ">=0.2.0"
-rjsmin = ">=1.2.0"
-requests = ">= 2.31.0"
-
-[requires]
-python_version = "3.14"
+### requirements.txt (Production)
+```txt
+Flask>=2.3.3
+Flask-Assets>=2.0.0,<3.0.0
+cssmin>=0.2.0
+rjsmin>=1.2.0
+requests>=2.31.0
 ```
 
 ### Install/Update
