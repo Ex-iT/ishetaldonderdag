@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pytz = ">=2023.3"
 Flask = ">=2.3.3"
-Flask-Minify = ">=0.42"
+Flask-Assets = ">=2.0.0,<3.0.0"
+cssmin = ">=0.2.0"
+rjsmin = ">=1.2.0"
 requests = ">= 2.31.0"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12"
+python_version = "3.14"

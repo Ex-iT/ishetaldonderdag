@@ -1,1 +1,5 @@
-pipenv
+Flask>=2.3.3
+Flask-Assets>=2.0.0,<3.0.0
+cssmin>=0.2.0
+rjsmin>=1.2.0
+requests>=2.31.0

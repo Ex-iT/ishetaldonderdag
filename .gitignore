@@ -6,3 +6,15 @@
 
 # Python Venv
 venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask-Assets cache
+static/.webassets-cache/
+
+# Generated asset bundles (content-hashed)
+static/js/main.*.js
+static/css/main.*.css
