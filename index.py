@@ -36,11 +36,27 @@ assets.register("main_css", css_bundle)
 # Serve compiled assets from /tmp on Vercel (or static/ locally)
 @app.route("/static/<path:filename>")
 def serve_assets(filename):
-    # Try /tmp first (Vercel), fallback to static/ (local dev)
+    # Ensure assets are compiled (first request on Vercel)
     for base_dir in [output_dir, "static"]:
         filepath = os.path.join(base_dir, filename)
         if os.path.exists(filepath):
             return send_from_directory(base_dir, filename)
+    
+    # Force compilation if not found (Vercel first request)
+    try:
+        if filename.startswith("js/"):
+            js_bundle.build()
+        elif filename.startswith("css/"):
+            css_bundle.build()
+    except Exception:
+        pass
+    
+    # Retry after compilation
+    for base_dir in [output_dir, "static"]:
+        filepath = os.path.join(base_dir, filename)
+        if os.path.exists(filepath):
+            return send_from_directory(base_dir, filename)
+    
     # Fallback to Flask's static handler
     return send_from_directory("static", filename)
 
