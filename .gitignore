@@ -14,6 +14,7 @@ __pycache__/
 
 # Flask-Assets cache
 static/.webassets-cache/
+static/.webassets-manifest
 
 # Generated asset bundles (content-hashed)
 static/js/main.*.js

@@ -5,17 +5,17 @@ from zoneinfo import ZoneInfo
 import secrets
 import os
 
-app = Flask(__name__, static_folder="static", static_url_path="")
+app = Flask(__name__, static_folder="static", static_url_path="/static")
 
-# Vercel has read-only FS except /tmp - configure Flask-Assets to use /tmp
+# Vercel has read-only FS except /tmp - use /tmp for cache/manifest only
 cache_dir = os.path.join("/tmp", "webassets-cache")
 os.makedirs(cache_dir, exist_ok=True)
 
 assets = Environment(app)
-assets.directory = cache_dir
+assets.directory = "static"  # Write compiled assets to static/ (Flask serves from here)
+assets.cache = cache_dir     # Cache/manifest in /tmp (writable)
 assets.manifest = "file"
 assets.url = "/static/"
-assets.cache = cache_dir
 
 js_bundle = Bundle(
     "js/main.js",
@@ -39,6 +39,16 @@ def is_thursday():
 
 def set_nonce():
     g.nonce = secrets.token_urlsafe()
+
+
+@app.route("/manifest.json")
+@app.route("/robots.txt")
+@app.route("/browserconfig.xml")
+@app.route("/favicon.ico")
+def static_root_files():
+    from flask import send_from_directory
+    filename = request.path.lstrip("/")
+    return send_from_directory("static", filename)
 
 
 @app.route("/", defaults={"path": ""})
