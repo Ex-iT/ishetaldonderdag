@@ -74,6 +74,7 @@ def serve_images(filename):
 @app.route("/robots.txt")
 @app.route("/browserconfig.xml")
 @app.route("/favicon.ico")
+@app.route("/sitemap.xml")
 def static_root_files():
     filename = request.path.lstrip("/")
     return send_from_directory("static", filename)
